@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>To Do List</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
+    <link href="style.css" type="text/css" rel="stylesheet" />
+    <style>
+      .delete-btn {
+        cursor: pointer;
+        padding: 20px;
+        width: 30%;
+        float: right;
+        border: 0;
+        box-sizing: border-box;
+      }
+    </style>
+    <script>
+      // Function to handle deletion of an item
+      function deleteItem(itemId) {
+        $.ajax({
+          url: "/delete/" + itemId,
+          method: "DELETE",
+          success: function (response) {
+            $("#" + itemId).remove(); // Remove the item from the list
+            location.reload();
+          },
+          error: function (error) {
+            console.log(error);
+          },
+        });
+      }
+
+      // Function to attach click event to delete buttons
+      $(document).ready(function () {
+        $("ul").on("click", ".delete-btn", function () {
+          let itemId = $(this).parent().attr("id");
+          deleteItem(itemId);
+          location.reload();
+        });
+      });
+    </script>
+  </head>
+  <body>
+    <h1 style="text-align: center; color: blue">To Do App</h1>
+    <div id="todo-table">
+      <form action="/" method="post">
+        <input
+          type="text"
+          name="items"
+          placeholder="Add a new item.."
+          required
+        />
+        <button type="submit">Add Item</button>
+      </form>
+      <ul>
+        <% items.forEach(function(item) { %>
+        <li id="<%= item._id %>">
+          <%= item.item %>
+          <span class="delete-btn">Delete Item</span>
+        </li>
+        <% }) %>
+      </ul>
+    </div>
+  </body>
+</html>
